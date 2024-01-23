@@ -76,6 +76,10 @@ func (p Products) MiddlewareValidateProduct(next http.Handler) http.Handler {
 			http.Error(rw, "Error reading product", http.StatusBadRequest)
 			return
 		}
+		err = prod.Validate()
+		if err != nil {
+			http.Error(rw, "Missing Required Fields", http.StatusBadRequest)
+		}
 
 		// add the product to the context
 		ctx := context.WithValue(r.Context(), KeyProduct{}, prod)
