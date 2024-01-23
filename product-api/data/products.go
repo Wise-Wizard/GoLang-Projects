@@ -1,13 +1,8 @@
 package data
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"regexp"
 	"time"
-
-	"github.com/go-playground/validator"
 )
 
 // Product defines the structure for an API product
@@ -22,22 +17,10 @@ type Product struct {
 	DeletedOn   string  `json:"-"`
 }
 
-func (p *Product) Validate() error {
-	validate := validator.New()
-	validate.RegisterValidation("sku", validateSKU)
-	return validate.Struct(p)
-}
-
-func validateSKU(fl validator.FieldLevel) bool {
-	re := regexp.MustCompile(`[a-z] + [a-z] + [a-z] +`)
-	matches := re.FindAllString(fl.Field().String(), -1)
-	return len(matches) != 1
-}
-
-func (p *Product) FromJSON(r io.Reader) error {
-	e := json.NewDecoder(r)
-	return e.Decode(p)
-}
+// func (p *Product) FromJSON(r io.Reader) error {
+// 	e := json.NewDecoder(r)
+// 	return e.Decode(p)
+// }
 
 // Products is a collection of Product
 type Products []*Product
@@ -48,14 +31,22 @@ type Products []*Product
 // this reduces allocations and the overheads of the service
 //
 // https://golang.org/pkg/encoding/json/#NewEncoder
-func (p *Products) ToJSON(w io.Writer) error {
-	e := json.NewEncoder(w)
-	return e.Encode(p)
-}
+// func (p *Products) ToJSON(w io.Writer) error {
+// 	e := json.NewEncoder(w)
+// 	return e.Encode(p)
+// }
 
 // GetProducts returns a list of products
 func GetProducts() Products {
 	return productList
+}
+
+func GetProduct(id int) (*Product, error) {
+	_, pos, err := findProduct(id)
+	if err != nil {
+		return nil, err
+	}
+	return productList[pos], nil
 }
 
 func AddProduct(p *Product) {
