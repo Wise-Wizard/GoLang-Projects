@@ -16,7 +16,7 @@ func (p *Products) ListAllProducts(rw http.ResponseWriter, r *http.Request) {
 	prods := data.GetProducts()
 
 	// serialize the list to JSON
-	err := data.ToJSON(prods, rw)
+	err := prods.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
 	}
@@ -40,8 +40,8 @@ func (p *Products) ListSingleProduct(rw http.ResponseWriter, r *http.Request) {
 	}
 	p.l.Println("prod", prod)
 	// serialize the list to JSON
-	err = data.ToJSON(prod, rw)
-	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
-	}
+	// err = prod.ToJSON(prod, rw)
+	// if err != nil {
+	// 	http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+	// }
 }
